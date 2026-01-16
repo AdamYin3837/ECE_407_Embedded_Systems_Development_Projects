@@ -4,3 +4,6 @@
 [submodule "picotool"]
 	path = picotool
 	url = https://github.com/raspberrypi/picotool.git
+[submodule "debugprobe"]
+	path = debugprobe
+	url = https://github.com/raspberrypi/debugprobe.git
