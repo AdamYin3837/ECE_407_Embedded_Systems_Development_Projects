@@ -1,1 +1,13 @@
 This is the workflow for the project 1
+
+Phase 1: Conceptual Design
+  1. What happens when rotating Clockwise (CW)?
+  2. What happens when rotating Counter-Clockwise (CCW)?
+  3. How does the LED ring visually represent this?
+
+Phase 2: Hardware Setup
+
+Phase 3: Firmware Development
+  1. Input Logic(Encoder)
+
+  2. Output Logic(LED Ring)
