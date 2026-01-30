@@ -1,0 +1,26 @@
+; Encoder PIO State Machine
+; Decodes quadrature encoder signals (Gray code)
+; 
+; Pins: in_base points to ENCODER_A_PIN (B is at base+1)
+; Outputs: Pushes state to RX FIFO on every read (C code handles debouncing)
+; C code applies the Gray code transition table
+
+.program encoder
+
+    mov isr, null
+    in pins, 2          ; Read initial state
+    mov x, isr          ; Store in X
+    push noblock        ; Push initial state
+
+.wrap_target
+loop:
+    mov isr, null
+    in pins, 2          ; Read current state
+    mov y, isr          ; Store in Y
+    jmp x!=y, change    ; If state changed, update
+    jmp loop            ; Else loop
+
+change:
+    push noblock        ; Push new state
+    mov x, y            ; Update stored state
+.wrap
