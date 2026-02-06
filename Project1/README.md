@@ -46,12 +46,12 @@ A gamified mode designed to test user precision and reaction time.
 
 | Component | Pin Function | Pico GPIO Pin |
 | :--- | :--- | :--- |
-| **Encoder** | Channel A | GPIO **[X]** |
-| | Channel B | GPIO **[X]** |
-| | Switch (SW) | GPIO **[X]** |
-| | LED Red | GPIO **[X]** |
-| | LED Green | GPIO **[X]** |
-| | LED Blue | GPIO **[X]** |
+| **Encoder** | Channel A | GPIO **14** |
+| | Channel B | GPIO **15** |
+| | Switch (SW) | GPIO **22** |
+| | LED Red | GPIO **18** |
+| | LED Green | GPIO **19** |
+| | LED Blue | GPIO **20** |
 | **LED Ring** | Data In (DI) | GPIO **[X]** |
 | **Power** | VCC | 3.3V / VBUS |
 | | GND | GND |
@@ -74,8 +74,8 @@ A gamified mode designed to test user precision and reaction time.
 ### Build Steps
 1.  **Clone the repository:**
     ```bash
-    git clone <your-repo-url>
-    cd <repo-name>
+    git clone https://github.com/ECE-407-W2026/Development-Group0x05.git
+    cd Development-Group0x05
     ```
 
 2.  **Create a build directory:**
@@ -106,7 +106,8 @@ A gamified mode designed to test user precision and reaction time.
 
 ---
 
-**Course:** [Insert Course Name/Number]
-**Team:** [Insert Team Name or Members]
+**Course:** ECE 407 - Embedded Systems Development
+**Team:** Uzair Tariq, Adam Yin
 **Date:** Feb 6, 2026
+
 
