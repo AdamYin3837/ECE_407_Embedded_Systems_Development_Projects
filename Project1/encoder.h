@@ -1,8 +1,8 @@
 #ifndef ENCODER_H
 #define ENCODER_H
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 // ============================================================================
 // Configuration Defines
@@ -12,7 +12,7 @@
 #define ENCODER_B_PIN 15
 #define ENCODER_SW_PIN 21
 
-#define ENCODER_DEG_PER_STEP 5
+#define ENCODER_STEPS_PER_DETENT 7
 #define BUTTON_DEBOUNCE_TIME_MS 50
 
 // ============================================================================
@@ -47,8 +47,8 @@ void encoder_button_init(void);
  * Normalize degrees to 0-359 range
  */
 static inline int normalize_degrees(int degrees) {
-    int normalized = degrees % 360;
-    return (normalized < 0) ? (normalized + 360) : normalized;
+  int normalized = degrees % 360;
+  return (normalized < 0) ? (normalized + 360) : normalized;
 }
 
 #endif // ENCODER_H
