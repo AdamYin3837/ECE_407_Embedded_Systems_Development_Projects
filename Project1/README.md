@@ -59,7 +59,6 @@ A gamified mode designed to test user precision and reaction time.
 > **Note:** The Encoder LEDs utilize resistors to limit current. The WS2812B ring is connected directly to the specific GPIO.
 
 ## Directory Structure
-* `src/`: Contains all source code (`.c`, `.h`).
 * `docs/`: Contains project documentation, datasheets, the project report, and the demo video.
 * `CMakeLists.txt`: Build configuration.
 * `README.md`: Project documentation (this file).
@@ -96,9 +95,7 @@ A gamified mode designed to test user precision and reaction time.
     ```
 
 5.  **Flash the Pico:**
-    * Hold the `BOOTSEL` button on the Pico and plug it into USB.
-    * Copy the generated `.uf2` file from the `build` directory to the `RPI-RP2` drive.
-    * *Alternatively, use the Debug Probe via VS Code to flash and debug.*
+    * We use the Debug Probe via VS Code to flash and debug.*
 
 ## Features Implemented
 - [x] Basic Quadrature Decoding (CW/CCW).
@@ -111,4 +108,5 @@ A gamified mode designed to test user precision and reaction time.
 
 **Course:** [Insert Course Name/Number]
 **Team:** [Insert Team Name or Members]
-**Date:** [Insert Date]
+**Date:** Feb 6, 2026
+
