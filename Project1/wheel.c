@@ -108,8 +108,8 @@ void wheel_render(void) {
     int idx2 = (idx1 + 1) % WS2812_NUM_LEDS;
     float fraction = pos - idx1;
     
-    int b1 = (int)((1.0f - fraction) * 255);
-    int b2 = (int)(fraction * 255);
+    int b1 = (int)((1.0f - fraction) * 32);
+    int b2 = (int)(fraction * 32);
 
     ws2812_set_pixel(idx1, b1, b1, b1); 
     ws2812_set_pixel(idx2, b2, b2, b2); 

@@ -29,7 +29,7 @@
 #define WIN_FLASH_COLOR_B 0
 
 #define BASE_TIME_MS 10000
-#define MIN_TIME_MS 1000
+#define MIN_TIME_MS 1500
 #define TIME_DECREMENT_MS 500
 
 // ============================================================================
