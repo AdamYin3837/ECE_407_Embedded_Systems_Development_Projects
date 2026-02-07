@@ -52,11 +52,14 @@ A gamified mode designed to test user precision and reaction time.
 | | LED Red | GPIO **18** |
 | | LED Green | GPIO **19** |
 | | LED Blue | GPIO **20** |
-| **LED Ring** | Data In (DI) | GPIO **[X]** |
+| **LED Ring** | Data In (DI) | GPIO **27** |
 | **Power** | VCC | 3.3V / VBUS |
 | | GND | GND |
 
 > **Note:** The Encoder LEDs utilize resistors to limit current. The WS2812B ring is connected directly to the specific GPIO.
+
+<img width="1046" height="883" alt="image" src="https://github.com/user-attachments/assets/16bcad41-54ce-452d-9a46-a765167f838a" />
+Figure 1. Wiring diagram for this project. Not to scale.
 
 ## Directory Structure
 * `docs/`: Contains project documentation, datasheets, the project report, and the demo video.
@@ -109,5 +112,6 @@ A gamified mode designed to test user precision and reaction time.
 **Course:** ECE 407 - Embedded Systems Development
 **Team:** Uzair Tariq, Adam Yin
 **Date:** Feb 6, 2026
+
 
 
