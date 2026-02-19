@@ -28,21 +28,21 @@ set(PICO_BOARD pico CACHE STRING "Board type")
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
 
-project(mpu9250_spi C CXX ASM)
+project(adxl343_spi C CXX ASM)
 
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(mpu9250_spi
-        mpu9250_spi.c
+add_executable(adxl343_spi
+        adxl343_spi.c
         )
 
 # pull in common dependencies and additional spi hardware support
-target_link_libraries(mpu9250_spi pico_stdlib hardware_spi)
+target_link_libraries(adxl343_spi pico_stdlib hardware_spi)
 
 # create map/bin/hex file etc.
-pico_add_extra_outputs(mpu9250_spi)
+pico_add_extra_outputs(adxl343_spi)
 
 # add url via pico_set_program_url
