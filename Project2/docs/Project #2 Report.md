@@ -1,6 +1,6 @@
 # Project #2 Report
-**Team:** Group 0x05 (Uzair Tariq, Adam Yin)
-**Target Device:** Raspberry Pi Pico (RP2040)
+**Team:** Group 0x05 (Uzair Tariq, Adam Yin)  
+**Target Device:** Raspberry Pi Pico (RP2040)  
 **Subject:** Analogue Sensing, Motor Control, and Hardware Emulation
 
 ## Executive Summary
