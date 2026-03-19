@@ -59,6 +59,35 @@ static void dma_i2s_in_handler(void) {
     dma_hw->ints0 = 1u << i2s.dma_ch_in_data;  // clear IRQ
 }
 
+// Returns peak absolute value of left channel samples in the buffer
+static int32_t find_peak(const int32_t *buf) {
+    int32_t peak = 0;
+    // Left channel at even indices, data is 24-bit MSB-aligned so shift right 8
+    for (int i = 0; i < STEREO_BUFFER_SIZE; i += 2) {
+        int32_t sample = buf[i] >> 8;  // 24-bit signed value
+        if (sample < 0) sample = -sample;
+        if (sample > peak) peak = sample;
+    }
+    return peak;
+}
+
+static void print_bar(int32_t peak) {
+    // INMP441 max 24-bit value is 2^23 = 8,388,608
+    // Scale to 40 characters wide
+    const int32_t max_val = 1 << 23;
+    const int bar_width = 40;
+    int filled = (int)((int64_t)peak * bar_width / max_val);
+    if (filled > bar_width) filled = bar_width;
+
+    printf("\r|");
+    for (int i = 0; i < bar_width; i++) {
+        printf(i < filled ? "#" : " ");
+    }
+    printf("| %-8ld", peak);
+    stdio_flush();
+}
+
+
 int main() {
     // 132 MHz gives clean integer dividers for 48kHz I2S at 32-bit depth
     set_sys_clock_khz(132000, true);
@@ -78,21 +107,9 @@ int main() {
         if (buffer_ready) {
             buffer_ready = false;
             const int32_t *buf = (const int32_t *)ready_buffer;
-
-            // Right channel is at even indices (0, 2, 4, ...)
-            // Left channel (all zeros for INMP441 with L/R=GND) is at odd indices
-            // Print every 8th right-channel sample to keep output readable
-            for (int i = 0; i < STEREO_BUFFER_SIZE; i += 16) {
-                int32_t right = buf[i];  // right channel sample, raw 32-bit signed integer
-                // The INMP441 outputs 24-bit audio in the upper 24 bits of the 32-bit sample, so we can right-shift by 8 to get the actual audio sample
-                int32_t audio_sample = right >> 8;
-                printf("%ld\n", right);
-            }
+            int32_t peak = find_peak(buf);
+            print_bar(peak);
         }
-
-        // uint32_t raw = pio_sm_get_blocking(pio0, i2s.sm_din);
-        // printf("0x%08lX\n", raw);
-        // sleep_ms(10);  // slow it down so terminal is readable
     }
 
     return 0;
