@@ -30,3 +30,6 @@ Since we are only using a single sensor, we can only pull data from one channel 
 * **Right Channel:** `L/R` pin connected to 3V3.
 
 Once we realized our software was polling the right channel's indices, we switched the L/R pin wire from GND to 3V3. The issue got solved successfully.
+
+### 3. Extrea Feature: Real-Time Peak Visualization
+To provide immediate visual feedback of the microphone’s sensitivity, we implemented a real-time VU meter in the serial terminal. Instead of scrolling raw numbers, we processed the incoming DMA buffers to create a dynamic bar graph.
