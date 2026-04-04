@@ -1,35 +1,49 @@
-# Assignment 3 Report: I2S Digital Audio Acquisition
+# Assignment 4: Digital Audio Input via PIO Extended
 
 **Group Name/Number:** Group 0x05 
 **Team Members:** Uzair Tariq, Adam Yin 
+**Date:** April 4, 2026  
 
 ---
 
-## Purpose
-The primary objective of this assignment is to successfully acquire digital audio data from an INMP441 I2S omnidirectional microphone using the RP2040. This involves configuring the RP2040's Programmable I/O (PIO) to implement the I2S protocol, utilizing Direct Memory Access (DMA) for efficient data transfer, and properly decoding the raw digital signals into readable, centered decimal waveforms that accurately represent physical sound.
+## 1. Purpose
+The goal of this assignment is to extend the I2S audio acquisition system from Assignment 3 by implementing a **Finite Impulse Response (FIR) Bandpass Filter**. The system is designed to specifically detect **500 Hz tones** while rejecting out-of-band noise and higher-frequency interference (specifically a 1000 Hz tone).
 
-## Introduction
-Unlike standard analog microphones that output simple voltage waves, the INMP441 transmits digital data using the I2S protocol. Reading this digital stream requires strict timing. To avoid overloading our main processor, we used the RP2040's PIO (Programmable I/O) hardware to manage the clock signals and read the incoming audio bits. We combined this with DMA to continuously collect the data in the background. The main challenge of this assignment was not just wiring the hardware, but decoding this raw stream of background data into readable, accurate audio waveforms.
+## 2. Introduction
+In embedded signal processing, detecting a specific frequency requires a balance between frequency selectivity and computational resources. We implemented a Windowed-Sinc FIR filter on the RP2040 microcontroller. By processing the digital I2S stream from an INMP441 microphone, the system calculates the "energy" of the filtered signal to determine if a 500 Hz tone is present in real-time.
 
-## Assignment Specific Details
+## 3. Assignment Specific Details
 
-### 1. Data Parsing: The Hexadecimal to Decimal Challenge
-Our initial successful data acquisition resulted in a continuous stream of raw hexadecimal values printing to the serial monitor. While this confirmed that our PIO state machine and hardware wiring were functional, the raw data was unreadable as an audio waveform.
+### 3.1 Filter Design & Specification
+We designed a Bandpass FIR filter with the following parameters:
+* **Sampling Frequency ($f_s$):** 48,000 Hz
+* **Target Center Frequency:** 500 Hz
+* **Passband:** 400 Hz – 600 Hz
+* **Window Type:** Hamming Window (to reduce side-lobe leakage)
+* **Nyquist Limit:** 24,000 Hz (Our target of 500 Hz is well below the half-Nyquist limit, ensuring no aliasing issues).
 
-The challenge stemmed from a mismatch between the sensor's output resolution and the microcontroller's memory architecture:
-* The INMP441 microphone outputs **24-bit** signed audio samples.
-* The RP2040's DMA and PIO FIFO read data in standard **32-bit** words.
+### 3.2 Optimization & Iteration Process
+The implementation involved several iterations to find the "Sweet Spot" for embedded performance:
 
-To fix this, we implemented a bit-wise arithmetic shift (`raw_data >> 8`). This discarded the lower 8 bits of padding, properly sign-extending the 24-bit two's complement value into a standard 32-bit signed integer. This successfully transformed the chaotic hex stream into a readable decimal waveform that reacted proportionally to ambient noise and direct sound.
+* **Iteration 1 (51 Taps):** * **Result:** The filter transition band was too wide. 
+    * **Observation:** Testing with a 1000 Hz tone produced higher energy readings than the 500 Hz target due to leakage. It was impossible to set a reliable threshold.
+* **Iteration 2 (151 Taps):** * **Result:** The filter was extremely narrow and precise. 
+    * **Observation:** While selectivity was high, the filter became "too sharp." Any slight frequency drift from the playback source caused the signal to be rejected.
+* **Final Solution (101 Taps):**
+    * **Result:** Optimal balance. 
+    * **Observation:** This configuration successfully suppressed 1000 Hz interference while remaining robust enough to consistently detect the 500 Hz input.
 
-### 2. Channel Configuration and Hardware-Software Synchronization
-During our testing, we encountered an issue where the sensor appeared unresponsive to voices (outputting `0`), but generated arbitrary numbers when the physical sensor was tapped. We discovered this was a synchronization issue between the hardware channel selection and our software array indexing.
+### 3.3 Tone Detection Logic
+To detect the tone, we implemented an **Energy Accumulation** method:
+1.  **DC Offset Removal:** Real-time calculation of the mean to center the signal at zero.
+2.  **FIR Convolution:** Samples are passed through the 101-tap array using a circular buffer.
+3.  **Energy Calculation:** Filtered samples are squared and averaged over the buffer.
+4.  **Signal Scaling:** To handle the small floating-point values inherent in high-tap filters, a **100.0f scaling factor** was applied to the energy result for stable thresholding.
+5.  **Thresholding:** A final `DETECT_THRESHOLD` of **0.00030** was set based on empirical testing of the 500Hz vs 1000Hz energy gap.
 
-Since we are only using a single sensor, we can only pull data from one channel slot in the I2S stereo frame. The INMP441 determines its channel based on the logic level of the `L/R` pin:
-* **Left Channel:** `L/R` pin connected to GND.
-* **Right Channel:** `L/R` pin connected to 3V3.
+### 3.4 Trade-offs in Embedded Signal Processing
+Following the learning objectives of the assignment, we considered the following trade-offs:
 
-Once we realized our software was polling the right channel's indices, we switched the L/R pin wire from GND to 3V3. The issue got solved successfully.
-
-### 3. Extrea Feature: Real-Time Peak Visualization
-To provide immediate visual feedback of the microphone’s sensitivity, we implemented a real-time VU meter in the serial terminal. Instead of scrolling raw numbers, we processed the incoming DMA buffers to create a dynamic bar graph.
+* **Selectivity vs. Computational Latency:** Increasing the number of Taps from 51 to 101 improved the "steepness" of the filter but doubled the number of multiply-accumulate (MAC) operations per sample. The RP2040 handled 101 Taps comfortably at 48kHz without dropping I2S frames.
+* **Filter Length vs. Detection Delay:** A longer filter introduces a group delay ($M/2$ samples). At 101 samples and a 48kHz sample rate, the delay is approximately 2.1ms, which is negligible for real-time audio detection.
+* **Bandwidth vs. Robustness:** A narrower bandwidth is better for picking out a tone in a noisy environment but requires a more stable source. Our 200 Hz bandwidth (400-600 Hz) provides a safety margin for slight variations in common playback devices.
